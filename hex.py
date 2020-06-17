@@ -17,17 +17,20 @@ screen_time = time.time()
 game = Image.open('/sdcard/dos.png')
 width, height = game.size
 print(game.size)
-dos = game.crop(((width/27), (height/5.4), (width-(width/27)), (height/1.92)))
+dos = game.crop((round(width/20), round(height/3.7), round(width/1.8), round(height/2.2)))
+# Full window
+#dos = game.crop(((width/27), (height/5.4), (width-(width/27)), (height/1.92)))
 dos.save('/sdcard/vision.png', 'PNG')
 screen = pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0').replace('\n', ' ')
 ocr_time = time.time()
 unformattedPuzzle = screen.split(' ')
 print('Before format:')
 print(unformattedPuzzle)
+dictionary = { 'i': '1', 'l': '1', 'O': '0', 'S': '5', 'b': '6', '?': '7', 'o': '0', 'Z': '2', 'z': '2'}
 puzzle = []
 for item in unformattedPuzzle:
     if item and len(item) == 2:
-        puzzle.append(item.replace('i', '1').replace('l', '1').replace('O', '0').replace('S', '5').replace('b', '6').replace('?', '7').upper())
+        puzzle.append(item.translate(str.maketrans(dictionary)).upper())
 print('FORMATTED:')
 print(puzzle)
 solutionBest = []
@@ -51,8 +54,9 @@ if solutionBest:
     subprocess.Popen(['adb', 'shell', 'input', 'text', solutionBest[0]]).wait()
     subprocess.Popen(['adb', 'shell', 'input', 'keyevent', '66']).wait()
 elif solutionMaybe:
-    subprocess.Popen(['adb', 'shell', 'input', 'text', solutionMaybe[0].upper()]).wait()
-    subprocess.Popen(['adb', 'shell', 'input', 'keyevent', '66']).wait()
+    for solution in solutionMaybe:
+        subprocess.Popen(['adb', 'shell', 'input', 'text', solution]).wait()
+        subprocess.Popen(['adb', 'shell', 'input', 'keyevent', '66']).wait()
 input_time = time.time()
 print('ELAPSED:')
 print('Screenshot time', (screen_time - start_time))
