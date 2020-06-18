@@ -1,12 +1,13 @@
 import subprocess
 import time
 import json
+import re
 
 import helpers
 import HEX
 
 def checkHex(foundStrings):
-    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
+    hexList = ['WRONG', 'CODET', 'CODE']
     for string in foundStrings:
         if string in hexList:
             return True
@@ -19,15 +20,32 @@ def goBack(HEX=False):
     helpers.inputText(command)
 
 def checkFolder(name):
-    emptyList = ['<THE', 'DIRECTORY', 'IS', '<INVALID']
+    emptyList = ['<THE', 'DIRECT', '<INVALID']
     hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
     blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.']
-    fixingList = ['PR', 'UNKNOUWN']
+    fixingList = ['PR', 'UNKNOUWN', 'DOCCS']
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
     badFiles = ['UNKNOWN', 'README', 'README2', 'README3'] 
     nameType = 'unknown'
     check = False
+    # Other fixes
+    if name in fixingList:
+        # Double char fix
+        match = re.search(r'((\w)\2{1,})', name)
+        if match:
+            name = name.replace(match.group(1), match.group(1)[:1])
+        else:
+            return False
+    # Last letter fix
+    lastLetter = name[-1:]
+    if lastLetter == 'Z':
+        name = name[:-1] + '2'
+        check = True
+    # First letter fix
+    firstLetter = name[:2]
+    if firstLetter == 'TF' or firstLetter == '1F':
+        name = '!' + name[1:]
     # Check if directory is empty
     if name in emptyList:
          return 'empty'
@@ -35,42 +53,30 @@ def checkFolder(name):
     for item in blacklist:
         if item in name:
             return False
-    # Other fixes
-    if name in fixingList:
-        return False
-    # Last letter fix
-    lastLetter = name[-1:]
-    if lastLetter == 'Z':
-        name = name[:-1] + '2'
-        check = True
-    # First letter fix
-    firstLetter = name[:1]
-    if firstLetter == 'T':
-        name = '!' + name[1:]
     if name in openFiles:
         nameType = 'open'
     if name in delFiles:
         nameType = 'del'
     if name in badFiles:
         nameType = 'bad'
+        check = False
 
     if check:
         valid = True
-        HEX = False
         helpers.inputText([f'CD {name}'])
-        screen = helpers.ocr()
+        screen = helpers.ocr(20, 4.55, 1.8)
         formatted = helpers.formatOcr(screen, False)
         print(formatted)
         for item in formatted:
             if item in hexList:
-                HEX = True
+                HEX.solve()
                 break
             if item in emptyList:
                 name = name[:-1] + '3'
                 valid = False
                 break
         if valid:
-            goBack(HEX)
+            goBack()
     return { 'name': name, 'nameType': nameType }
 
 # Constant folders in game
@@ -91,6 +97,8 @@ def openDir(name=False, level=0):
         commands.pop(0)
     helpers.inputText(commands)
     screen = helpers.ocr()
+    print('SCREEN')
+    print(screen)
     formatted = helpers.formatOcr(screen, False)
     print('FORMATTED:')
     print(formatted)
@@ -132,13 +140,13 @@ def explore(currentDir, level=0):
                 currentDir[key] = newDir
                 goBack()
         else:
-        openFile(key, value)
+            openFile(key, value)
     goBack()
     return currentDir
 
 def start(current=False):
     start_time = time.time()
-    currentDir = knownTree()
+    currentDir = knownTree()['PROGRESSBAR']
     if current:
         currentDir = openDir()
     explored = explore(currentDir, 1)

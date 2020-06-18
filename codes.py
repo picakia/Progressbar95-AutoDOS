@@ -12,7 +12,7 @@ def enter(syscode):
     helpers.inputText(['CD PROGRESSBAR'])
     commands = []
     if colorcode: 
-        commands.extend['COLORCODE', screen]
+        commands.extend(['COLORCODE', screen]);
     if syscode:
         commands.extend(['SYSCODE', syscode]);
     helpers.inputText(commands)

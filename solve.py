@@ -17,7 +17,7 @@ parser.add_argument('--hex', action='store_true', default=False, help='Only solv
 parser.add_argument('--dev', action='store_true', default=False, help='DEV: call debug functions')
 args = parser.parse_args()
 # Run adb devices to start daemon
-subprocess.Popen(['adb', 'devices'], stdout=subprocess.DEVNULL).wait()
+subprocess.Popen(['adb', 'devices']).wait()
 
 print('Open game')
 subprocess.Popen(['am', 'start', '--activity-single-top', '-n', 'com.spookyhousestudios.progressbar95/com.ansca.corona.CoronaActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()

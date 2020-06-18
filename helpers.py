@@ -1,6 +1,7 @@
 from PIL import Image
 import pytesseract
 import subprocess
+import time
 
 # OCR formatter
 def formatOcr(string, replace=True, split=True, lenght=40):
@@ -25,11 +26,14 @@ def inputText(data):
     return
 
 # Get what matters from screenshot
-def ocr(divideLeft=20, divideTop=4.55, divideRight=1.8, divideBottom=2.1):
+def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     subprocess.Popen(['adb', 'shell', 'screencap', '-p', '/sdcard/dos.png']).wait()
     game = Image.open('/sdcard/dos.png')
     width, height = game.size
     dos = game.crop((round(width/divideLeft), round(height/divideTop), round(width/divideRight), round(height/divideBottom)))
+    ocr_time = time.time()
     dos.save('/sdcard/vision.png', 'PNG')
-    return pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0').replace('\n', ' ')
+    vision = pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0').replace('\n', ' ')
+    print('OCR time: ', (time.time() - ocr_time))
+    return vision
 

@@ -3,6 +3,16 @@ import time
 
 import helpers
 
+def checkSolution():
+    badSolution = ['WRONG', 'URONG', 'CODE']
+    screen = helpers.ocr(20, 2.1, 3.4, 2)
+    response = helpers.formatOcr(screen, False)
+    for item in response:
+        if 'WRONG' in item:
+            print('wrong')
+            return False
+    return True
+
 def solve():
     helpers.inputText(['HEX'])
     start_time = time.time()
@@ -35,6 +45,9 @@ def solve():
         helpers.inputText(solutionBest)
     elif solutionMaybe:
         helpers.inputText(solutionMaybe)
+        correct = checkSolution()
+        if not correct:
+            helpers.inputText(solutionLow)
     input_time = time.time()
     print('ELAPSED:')
     print('OCR time', (ocr_time - start_time))
