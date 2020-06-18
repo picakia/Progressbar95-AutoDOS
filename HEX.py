@@ -37,7 +37,7 @@ def solve():
         helpers.inputText(solutionMaybe)
     input_time = time.time()
     print('ELAPSED:')
-    print('OCR time', (ocr_time - screen_time))
+    print('OCR time', (ocr_time - start_time))
     print('Solution time', (solution_time - ocr_time))
     print('Input time', (input_time - solution_time))
     print('Total', (time.time() - start_time))

@@ -1,28 +1,42 @@
 import subprocess
 import time
+import json
 
 import helpers
+import HEX
 
-def goBack():
-    helpers.inputText(['CD..'])
+def checkHex(foundStrings):
+    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
+    for string in foundStrings:
+        if string in hexList:
+            return True
+    return False
+
+def goBack(HEX=False):
+    command = ['CD..']
+    if HEX:
+        command = ['X']
+    helpers.inputText(command)
 
 def checkFolder(name):
     emptyList = ['<THE', 'DIRECTORY', 'IS', '<INVALID']
-    blacklist = ['TXT', 'EXE', '<', '>', ':', '/']
+    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
+    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.']
+    fixingList = ['PR', 'UNKNOUWN']
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
     badFiles = ['UNKNOWN', 'README', 'README2', 'README3'] 
     nameType = 'unknown'
     check = False
     # Check if directory is empty
-    for item in emptyList:
-        if name in item:
-            return 'empty'
+    if name in emptyList:
+         return 'empty'
     # Check blacklist
     for item in blacklist:
         if item in name:
             return False
-    if len(name) < 3:
+    # Other fixes
+    if name in fixingList:
         return False
     # Last letter fix
     lastLetter = name[-1:]
@@ -42,17 +56,21 @@ def checkFolder(name):
 
     if check:
         valid = True
+        HEX = False
         helpers.inputText([f'CD {name}'])
         screen = helpers.ocr()
         formatted = helpers.formatOcr(screen, False)
         print(formatted)
         for item in formatted:
-            for item2 in emptyList:
-                if item in item2:
-                    name = name[:-1] + '3'
-                    valid = False
+            if item in hexList:
+                HEX = True
+                break
+            if item in emptyList:
+                name = name[:-1] + '3'
+                valid = False
+                break
         if valid:
-            goBack()
+            goBack(HEX)
     return { 'name': name, 'nameType': nameType }
 
 # Constant folders in game
@@ -77,6 +95,10 @@ def openDir(name=False, level=0):
     print('FORMATTED:')
     print(formatted)
     dirs = { 'level': level }
+    isHex = checkHex(formatted)
+    if isHex:
+        HEX.solve()
+        return openDir(False, level)
     for item in formatted:
         thing = checkFolder(item)
         if thing == 'empty':
@@ -92,7 +114,7 @@ def openFile(name, method):
     if method == 'open':
         helpers.inputText([name])
     if method == 'del':
-        helpers.inputText([f'DEL {name}'])
+        helpers.inputText([f'DEL {name}.TXT'])
     return
 
 def explore(folderTree, level=0):
@@ -105,7 +127,7 @@ def explore(folderTree, level=0):
             newDir = openDir(key, level)
             if newDir != 'empty':
                 folderTree[key] = newDir
-                explore(newDir, level+1)
+                explore(newDir, (level+1))
             else:
                 folderTree[key] = newDir
                 goBack()
@@ -118,8 +140,9 @@ def start():
     start_time = time.time()
     folderTree = knownTree()
     currentDir = openDir()
-    explored = explore(currentDir)
-    print(explored)
+    explored = explore(currentDir, 1)
+    print(json.dumps(explored, indent=2))
     print('ELAPSED explore:')
     print('Total', (time.time() - start_time))
+    helpers.inputText(['FINISHED!'])
     return
