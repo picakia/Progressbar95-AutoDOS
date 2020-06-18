@@ -117,29 +117,30 @@ def openFile(name, method):
         helpers.inputText([f'DEL {name}.TXT'])
     return
 
-def explore(folderTree, level=0):
+def explore(currentDir, level=0):
     explore_time = time.time()
-    if folderTree == 'empty':
+    if currentDir == 'empty':
         print('Empty folder!')
         return
-    for key, value in folderTree.items():
+    for key, value in currentDir.items():
         if value == 'unknown':
             newDir = openDir(key, level)
             if newDir != 'empty':
-                folderTree[key] = newDir
+                currentDir[key] = newDir
                 explore(newDir, (level+1))
             else:
-                folderTree[key] = newDir
+                currentDir[key] = newDir
                 goBack()
         else:
-            openFile(key, value)
+        openFile(key, value)
     goBack()
-    return folderTree
+    return currentDir
 
-def start():
+def start(current=False):
     start_time = time.time()
-    folderTree = knownTree()
-    currentDir = openDir()
+    currentDir = knownTree()
+    if current:
+        currentDir = openDir()
     explored = explore(currentDir, 1)
     print(json.dumps(explored, indent=2))
     print('ELAPSED explore:')

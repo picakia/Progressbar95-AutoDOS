@@ -28,7 +28,7 @@ if args.hex:
     exit()
 
 if args.dev:
-    navigate.start()
+    navigate.start(True)
     exit()
     screen = ocr()
     print('SCREEN:')
@@ -47,7 +47,8 @@ inputText(['COLOR F0'])
 codes.enter(args.syscode)
 
 # Explore all other directories
+navigate.start()
 
 print('ELAPSED:')
 print((time.time() - start_time))
-#subprocess.Popen(['am', 'start', '--activity-single-top', 'com.termux/com.termux.app.TermuxActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
+subprocess.Popen(['am', 'start', '--activity-single-top', 'com.termux/com.termux.app.TermuxActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
