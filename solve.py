@@ -7,12 +7,14 @@ import argparse
 # Custom modules
 import HEX
 import codes
-from helpers import inputText
+import navigate
+from helpers import inputText, ocr, formatOcr
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='Automate ProgressDOS')
 parser.add_argument('--syscode', default=None, metavar='XXX', help='3 digit code displayed on boot screen')
 parser.add_argument('--hex', action='store_true', default=False, help='Only solve hex puzzle')
+parser.add_argument('--dev', action='store_true', default=False, help='DEV: call debug functions')
 args = parser.parse_args()
 # Run adb devices to start daemon
 subprocess.Popen(['adb', 'devices'], stdout=subprocess.DEVNULL).wait()
@@ -23,6 +25,17 @@ subprocess.Popen(['am', 'start', '--activity-single-top', '-n', 'com.spookyhouse
 # If you want to only solve hex puzzle pass --hex param
 if args.hex:
     HEX.solve()
+    exit()
+
+if args.dev:
+    navigate.start()
+    exit()
+    screen = ocr()
+    print('SCREEN:')
+    print(screen)
+    formatted = formatOcr(screen)
+    print('FORMATTED:')
+    print(formatted)
     exit()
 
 start_time = time.time()

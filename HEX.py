@@ -11,10 +11,7 @@ def solve():
     unformattedPuzzle = screen.split(' ')
     print('Before format:')
     print(unformattedPuzzle)
-    puzzle = []
-    for item in unformattedPuzzle:
-        if item and len(item) == 2:
-            puzzle.append(item.translate(str.maketrans(helpers.dictionary())).upper())
+    puzzle = helpers.formatOcr(screen, True, True, 3)
     print('FORMATTED:')
     print(puzzle)
     solutionBest = []
