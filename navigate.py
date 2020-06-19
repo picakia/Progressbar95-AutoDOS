@@ -6,6 +6,21 @@ import re
 import helpers
 import HEX
 
+def checkDirName(name):
+    emptyList = ['<THE', 'DIRECT', '<INVALID']
+    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
+    helpers.inputText([f'CD {name}'])
+    screen = helpers.ocr(20, 4.55, 1.8)
+    formatted = helpers.formatOcr(screen, False)
+    print('Check Dir Name: ')
+    print(formatted)
+    for item in formatted:
+        if item in hexList:
+            HEX.solve()
+        if item in emptyList:
+            return name[:-1] + '3'
+    return False
+
 def checkHex(foundStrings):
     hexList = ['WRONG', 'CODET', 'CODE']
     for string in foundStrings:
@@ -21,12 +36,11 @@ def goBack(HEX=False):
 
 def checkFolder(name):
     emptyList = ['<THE', 'DIRECT', '<INVALID']
-    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
-    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.']
+    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-']
     fixingList = ['PR', 'UNKNOUWN', 'DOCCS']
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
-    badFiles = ['UNKNOWN', 'README', 'README2', 'README3'] 
+    badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'MANUAL'] 
     nameType = 'unknown'
     check = False
     # Other fixes
@@ -37,11 +51,6 @@ def checkFolder(name):
             name = name.replace(match.group(1), match.group(1)[:1])
         else:
             return False
-    # Last letter fix
-    lastLetter = name[-1:]
-    if lastLetter == 'Z':
-        name = name[:-1] + '2'
-        check = True
     # First letter fix
     firstLetter = name[:2]
     if firstLetter == 'TF' or firstLetter == '1F':
@@ -59,24 +68,12 @@ def checkFolder(name):
         nameType = 'del'
     if name in badFiles:
         nameType = 'bad'
-        check = False
 
-    if check:
-        valid = True
-        helpers.inputText([f'CD {name}'])
-        screen = helpers.ocr(20, 4.55, 1.8)
-        formatted = helpers.formatOcr(screen, False)
-        print(formatted)
-        for item in formatted:
-            if item in hexList:
-                HEX.solve()
-                break
-            if item in emptyList:
-                name = name[:-1] + '3'
-                valid = False
-                break
-        if valid:
-            goBack()
+    # Last letter fix
+    lastLetter = name[-1:]
+    if lastLetter == 'Z':
+        name = name[:-1] + '2'
+        nameType = 'check'
     return { 'name': name, 'nameType': nameType }
 
 # Constant folders in game
@@ -113,6 +110,8 @@ def openDir(name=False, level=0):
             print('EMPTY: ', name)
             return thing
         if thing:
+            if thing['name'] in dirs:
+                thing['name'] = thing['name'][:-1] + '3'
             dirs[thing['name']] = thing['nameType']
     print('Found Dirs:')
     print(dirs)
@@ -125,14 +124,22 @@ def openFile(name, method):
         helpers.inputText([f'DEL {name}.TXT'])
     return
 
-def explore(currentDir, level=0):
+def explore(currentDir, level=0, recur=True):
     explore_time = time.time()
     if currentDir == 'empty':
         print('Empty folder!')
         return
     for key, value in currentDir.items():
+        dirToOpen = key
+        if value == 'check':
+            newName = checkDirName(dirToOpen)
+            if newName:
+                dirToOpen = newName
+            else:
+                dirToOpen = False
+            value = 'unknown'
         if value == 'unknown':
-            newDir = openDir(key, level)
+            newDir = openDir(dirToOpen, level)
             if newDir != 'empty':
                 currentDir[key] = newDir
                 explore(newDir, (level+1))
@@ -141,7 +148,8 @@ def explore(currentDir, level=0):
                 goBack()
         else:
             openFile(key, value)
-    goBack()
+    if recur:
+        goBack()
     return currentDir
 
 def start(current=False):
@@ -149,8 +157,11 @@ def start(current=False):
     currentDir = knownTree()['PROGRESSBAR']
     if current:
         currentDir = openDir()
-    explored = explore(currentDir, 1)
-    print(json.dumps(explored, indent=2))
+    print('CURRENT DIR')
+    print(currentDir)
+    if currentDir != 'empty':
+        explored = explore(currentDir, currentDir['level']+1, False)
+        print(json.dumps(explored, indent=2))
     print('ELAPSED explore:')
     print('Total', (time.time() - start_time))
     helpers.inputText(['FINISHED!'])

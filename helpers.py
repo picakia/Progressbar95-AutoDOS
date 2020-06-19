@@ -5,13 +5,16 @@ import time
 
 # OCR formatter
 def formatOcr(string, replace=True, split=True, lenght=40):
-    dictionary = { 'i': '1', 'l': '1', 'O': '0', 'S': '5', 'b': '6', '?': '7', 'o': '0', 'Z': '2', 'z': '2'}
+    dictionary = { 'i': '1', 'l': '1', 'O': '0', 'S': '5', 'b': '6', '?': '7', 'o': '0', 'Z': '2', 'z': '2', 'g': '8', 'n': 'A'}
     if not split:
         return string.translate(str.maketrans(dictionary)).upper().strip()
     arrayToFormat = string.split(' ')
     formatted = []
     for item in arrayToFormat:
-        if item and len(item) < lenght:
+        if item:
+            if len(item) > lenght:
+                # Three char fix
+                item = item[:1] + item[-1:]
             if replace:
                 formatted.append(item.translate(str.maketrans(dictionary)).upper().strip())
             else:
@@ -33,7 +36,7 @@ def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     dos = game.crop((round(width/divideLeft), round(height/divideTop), round(width/divideRight), round(height/divideBottom)))
     ocr_time = time.time()
     dos.save('/sdcard/vision.png', 'PNG')
-    vision = pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0').replace('\n', ' ')
+    vision = pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0 --psm 4').replace('\n', ' ')
     print('OCR time: ', (time.time() - ocr_time))
     return vision
 

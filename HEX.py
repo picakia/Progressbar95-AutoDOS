@@ -21,7 +21,7 @@ def solve():
     unformattedPuzzle = screen.split(' ')
     print('Before format:')
     print(unformattedPuzzle)
-    puzzle = helpers.formatOcr(screen, True, True, 3)
+    puzzle = helpers.formatOcr(screen, True, True, 2)
     print('FORMATTED:')
     print(puzzle)
     solutionBest = []
