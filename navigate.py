@@ -8,7 +8,7 @@ import HEX
 
 def checkDirName(name):
     emptyList = ['<THE', 'DIRECT', '<INVALID']
-    hexList = ['ENCRYPTED', 'DIRE', 'YOU', 'NEED', 'WRONG']
+    hexList = ['ENCRYPTED', 'YOU', 'NEED', 'WRONG']
     helpers.inputText([f'CD {name}'])
     screen = helpers.ocr(20, 4.55, 1.8)
     formatted = helpers.formatOcr(screen, False)
@@ -17,6 +17,7 @@ def checkDirName(name):
     for item in formatted:
         if item in hexList:
             HEX.solve()
+            break
         if item in emptyList:
             return name[:-1] + '3'
     return False
@@ -37,7 +38,7 @@ def goBack(HEX=False):
 def checkFolder(name):
     emptyList = ['<THE', 'DIRECT', '<INVALID']
     blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-']
-    fixingList = ['PR', 'UNKNOUWN', 'DOCCS']
+    fixingList = ['PR', 'UNKNOUWN', 'DOCCS', 'READHE', 'PROGRESS']
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
     badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'MANUAL'] 
@@ -92,6 +93,9 @@ def openDir(name=False, level=0):
     commands = [f'CD {name}', 'CLS', 'DIR']
     if not name:
         commands.pop(0)
+    if level == 7:
+        commands.pop()
+        commands.pop()
     helpers.inputText(commands)
     screen = helpers.ocr()
     print('SCREEN')
@@ -103,7 +107,11 @@ def openDir(name=False, level=0):
     isHex = checkHex(formatted)
     if isHex:
         HEX.solve()
+        if level == 7:
+            return 'empty'
         return openDir(False, level)
+    if level == 7:
+        return 'empty'
     for item in formatted:
         thing = checkFolder(item)
         if thing == 'empty':
@@ -152,11 +160,11 @@ def explore(currentDir, level=0, recur=True):
         goBack()
     return currentDir
 
-def start(current=False):
+def start(current=False, level=0):
     start_time = time.time()
     currentDir = knownTree()['PROGRESSBAR']
     if current:
-        currentDir = openDir()
+        currentDir = openDir(False, level)
     print('CURRENT DIR')
     print(currentDir)
     if currentDir != 'empty':

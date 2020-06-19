@@ -14,7 +14,7 @@ from helpers import inputText, ocr, formatOcr
 parser = argparse.ArgumentParser(description='Automate ProgressDOS')
 parser.add_argument('--syscode', default=None, metavar='XXX', help='3 digit code displayed on boot screen')
 parser.add_argument('--hex', action='store_true', default=False, help='Only solve hex puzzle')
-parser.add_argument('--dir', action='store_true', default=False, help='Browse from current directory')
+parser.add_argument('--dir', metavar='level', type=int, default=0, help='Browse from current directory')
 parser.add_argument('--dev', action='store_true', default=False, help='DEV: call debug functions')
 args = parser.parse_args()
 # Run adb devices to start daemon
@@ -30,7 +30,7 @@ if args.hex:
 
 # If you want to browse from current dir pass --dir param
 if args.dir:
-    navigate.start(True)
+    navigate.start(True, args.dir)
     exit()
 
 if args.dev:
