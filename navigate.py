@@ -23,22 +23,27 @@ def knownTree():
     }
 
 def checkDirName(name):
-    emptyList = ['<THE', 'DIRECT', '<INVALID']
-    hexList = ['ENCRYPTED', 'YOU', 'NEED', 'WRONG']
+    invalidList = ['<INVALID', '{INVALID']
+    hexList = ['ENCRYPTED', 'YOU', 'NEED', 'WROMG', 'WRONG', '[HEX]']
     helpers.inputText([f'CD {name}'])
     screen = helpers.ocr(20, 4.55, 1.8)
-    formatted = helpers.formatOcr(screen, False)
+    formatted = helpers.formatOcr(screen, 'none')
     print(f'[navigate.py] CheckDirName {name}:\n', formatted)
     for item in formatted:
         if item in hexList:
             HEX.solve()
-            break
-        if item in emptyList:
+            return False
+    for item in formatted:
+        if item in invalidList:
+            print('[navigate.py] BAD folder', name)
             return name[:-1] + '3'
     return False
 
-def checkHex(foundStrings):
+def checkHex(foundStrings=False):
     hexList = ['WRONG', 'YOU', 'NEED', '[HEX]']
+    if not foundStrings:
+        screen = helpers.ocr(5.5, 4, 1.35, 2.1)
+        foundStrings = helpers.formatOcr(screen)
     for string in foundStrings:
         if string in hexList:
             return True
@@ -51,26 +56,27 @@ def goBack(HEX=False):
     helpers.inputText(command)
 
 def checkFolder(name):
-    emptyList = ['<THE', 'DIRECT', '<INVALID']
-    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-']
-    fixingList = ['PR', 'UNKNOUWN', 'DOCCS', 'READHE', 'PROGRESS']
+    emptyList = ['<THE', '{THE', 'DIRECT', '<INVALID','{INVALID']
+    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-', '{', '}']
+    fixingList = {'MSC': 'MISC'}
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
-    badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'README4', 'MANUAL'] 
+    badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'README4', 'MANUAL']
+
     nameType = 'unknown'
-    check = False
-    # Other fixes
-    if name in fixingList:
+    
         # Double char fix
-        match = re.search(r'((\w)\2{1,})', name)
-        if match:
-            name = name.replace(match.group(1), match.group(1)[:1])
-        else:
-            return False
-    # First letter fix
-    firstLetter = name[:2]
-    if firstLetter == 'TF' or firstLetter == '1F':
-        name = '!' + name[1:]
+        #match = re.search(r'((\w)\2{1,})', name)
+        #if match:
+        #    name = name.replace(match.group(1), match.group(1)[:1])
+        #else:
+        #    return False
+    
+    # FixingList fixes 
+    for key, value in fixingList.items():
+        if name == key:
+            name = value
+
     # Check if directory is empty
     if name in emptyList:
          return 'empty'
@@ -83,10 +89,6 @@ def checkFolder(name):
     if lastLetter == 'Z':
         name = name[:-1] + '2'
         nameType = 'check'
-    # TEMFP fix
-    lastFP = name[-2:]
-    if lastFP == 'FP':
-        name = name[:-2] + 'P'
     if name in openFiles:
         nameType = 'open'
     if name in delFiles:
@@ -97,32 +99,22 @@ def checkFolder(name):
     return { 'name': name, 'nameType': nameType }
 
 def openDir(name=False, level=0):
-    commands = [f'CD {name}', 'CLS', 'DIR']
-    if not name:
-        commands.pop(0)
+    if name:
+        helpers.inputText([f'CD {name}'])
+        isHex = checkHex()
+        if isHex:
+            HEX.solve()
     if level == 7:
-        commands.pop()
-        commands.pop()
-    if not commands:
         helpers.inputText(['CD..'])
         return 'empty'
+
+    commands = ['CLS', 'DIR']
     helpers.inputText(commands)
     screen = []
-    if level == 7:
-        screen = helpers.ocr(5.5, 4, 1.35, 2.1)
-    else:
-        screen = helpers.ocr()
-    formatted = helpers.formatOcr(screen, False)
-    print(f'[navigate.py] Opened DIR {name}:\n', formatted)
+    screen = helpers.ocr()
+    formatted = helpers.formatOcr(screen)
+    print(f'[navigate.py] Opened DIR {name}\n', formatted)
     dirs = { 'level': level }
-    isHex = checkHex(formatted)
-    if isHex:
-        HEX.solve()
-        if level == 7:
-            return 'empty'
-        return openDir(False, level)
-    if level == 7:
-        return 'empty'
     for item in formatted:
         thing = checkFolder(item)
         if thing == 'empty':

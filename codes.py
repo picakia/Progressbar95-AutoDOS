@@ -8,11 +8,11 @@ def enter(syscode):
     start_time = time.time()
     screen = helpers.ocr(1.16, 4.6, 1.07, 4.1)
     ocr_time = time.time()
-    colorcode = helpers.formatOcr(screen, True, False)
+    colorcode = helpers.formatOcr(screen, 'hex', 2)
     helpers.inputText(['CD PROGRESSBAR'])
     commands = []
     if colorcode: 
-        commands.extend(['COLORCODE', screen]);
+        commands.extend(['COLORCODE', colorcode[0]]);
     if syscode:
         commands.extend(['SYSCODE', syscode]);
     helpers.inputText(commands)

@@ -4,8 +4,7 @@ Automation for ProgressDOS in Progressbar95 game on your android device
 ## Requirements
 * Termux
 * Python 3
-* Tesseract ocr
-* pytesseract
+* ocrad OCR engine
 * ADB for Termux
 * libjpg-turbo
 

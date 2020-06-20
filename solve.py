@@ -40,7 +40,7 @@ if args.dir:
     exit()
 
 if args.dev:
-    screen = ocr(5.5, 4, 1.35, 2.1)
+    screen = ocr(20, 4.7, 1.05, 2)
     print('SCREEN:')
     print(screen)
     formatted = formatOcr(screen)

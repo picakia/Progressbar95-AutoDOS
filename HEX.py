@@ -6,10 +6,10 @@ import helpers
 def checkSolution():
     badSolution = ['WRONG', 'URONG', 'CODE']
     screen = helpers.ocr(20, 2.1, 3.4, 2)
-    response = helpers.formatOcr(screen, False)
+    response = helpers.formatOcr(screen)
     for item in response:
         if 'WRONG' in item:
-            print('[HEX.py] [HEX.py] Wrong solution! Trying low possibility')
+            print('[HEX.py] Wrong solution! Trying low possibility')
             return False
     return True
 
@@ -18,10 +18,7 @@ def solve():
     start_time = time.time()
     screen = helpers.ocr(20, 3.7, 1.8, 2.2) 
     ocr_time = time.time()
-    unformattedPuzzle = screen.split(' ')
-    print('[HEX.py] Puzzle before formatting:\n', unformattedPuzzle)
-    puzzle = helpers.formatOcr(screen, True, True, 2)
-    print('[HEX.py] Formatted puzzle:\n', puzzle)
+    puzzle = helpers.formatOcr(screen, 'hex', 2)
     solutionBest = []
     solutionMaybe = []
     solutionLow = []
