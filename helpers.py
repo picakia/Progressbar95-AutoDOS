@@ -37,6 +37,6 @@ def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     ocr_time = time.time()
     dos.save('/sdcard/vision.png', 'PNG')
     vision = pytesseract.image_to_string(dos, lang='eng', config='-c tessedit_do_invert=0 --psm 4').replace('\n', ' ')
-    print('OCR time: ', (time.time() - ocr_time))
+    print('[helpers.py] OCR time:', round((time.time() - ocr_time), 4))
     return vision
 

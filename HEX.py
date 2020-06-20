@@ -9,7 +9,7 @@ def checkSolution():
     response = helpers.formatOcr(screen, False)
     for item in response:
         if 'WRONG' in item:
-            print('wrong')
+            print('[HEX.py] [HEX.py] Wrong solution! Trying low possibility')
             return False
     return True
 
@@ -19,11 +19,9 @@ def solve():
     screen = helpers.ocr(20, 3.7, 1.8, 2.2) 
     ocr_time = time.time()
     unformattedPuzzle = screen.split(' ')
-    print('Before format:')
-    print(unformattedPuzzle)
+    print('[HEX.py] Puzzle before formatting:\n', unformattedPuzzle)
     puzzle = helpers.formatOcr(screen, True, True, 2)
-    print('FORMATTED:')
-    print(puzzle)
+    print('[HEX.py] Formatted puzzle:\n', puzzle)
     solutionBest = []
     solutionMaybe = []
     solutionLow = []
@@ -39,8 +37,8 @@ def solve():
                 if number not in solutionLow:
                     solutionLow.append(number)
     solution_time = time.time()
-    print('SOLUTION:')
-    print('Best: ', solutionBest, ' Maybe: ', solutionMaybe, ' Low: ', solutionLow)
+    print('[HEX.py] SOLUTION:')
+    print('[HEX.py] Best: ', solutionBest, ' Maybe: ', solutionMaybe, ' Low: ', solutionLow)
     if solutionBest:
         helpers.inputText(solutionBest)
     elif solutionMaybe:
@@ -49,9 +47,9 @@ def solve():
         if not correct:
             helpers.inputText(solutionLow)
     input_time = time.time()
-    print('ELAPSED:')
-    print('OCR time', (ocr_time - start_time))
-    print('Solution time', (solution_time - ocr_time))
-    print('Input time', (input_time - solution_time))
-    print('Total', (time.time() - start_time))
+    print('[HEX.py] Hex solve times:')
+    print('[HEX.py] OCR time:', round((ocr_time - start_time), 4))
+    print('[HEX.py] Solution time:', round((solution_time - ocr_time), 4))
+    print('[HEX.py] Input time:', round((input_time - solution_time), 4))
+    print('[HEX.py] Total:', round((time.time() - start_time), 4))
     return
