@@ -56,7 +56,7 @@ def checkFolder(name):
     fixingList = ['PR', 'UNKNOUWN', 'DOCCS', 'READHE', 'PROGRESS']
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
-    badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'MANUAL'] 
+    badFiles = ['UNKNOWN', 'README', 'README2', 'README3', 'README4', 'MANUAL'] 
     nameType = 'unknown'
     check = False
     # Other fixes
