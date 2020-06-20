@@ -4,6 +4,13 @@ import subprocess
 import time
 import argparse
 
+# Run adb devices to start daemon first
+adbOut = subprocess.run(['adb','devices'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+devCheck = adbOut.stdout.replace('\t', '\n').split('\n')
+if 'device' not in devCheck:
+    print('No ADB device found! Check Readme on github page for possible solutions!')
+    exit()
+
 # Custom modules
 import HEX
 import codes
@@ -18,13 +25,6 @@ parser.add_argument('--dir', action='store_true', default=0, help='Browse from c
 parser.add_argument('--level', metavar='level', type=int, default=0, help='Starting directory level for --dir option')
 parser.add_argument('--dev', action='store_true', default=False, help='DEV: call debug functions')
 args = parser.parse_args()
-
-# Run adb devices to start daemon
-adbOut = subprocess.run(['adb','devices'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
-devCheck = adbOut.stdout.replace('\t', '\n').split('\n')
-if 'device' not in devCheck:
-    print('No ADB device found! Check Readme on github page for possible solutions!')
-    exit()
 
 print('Open game')
 subprocess.Popen(['am', 'start', '--activity-single-top', '-n', 'com.spookyhousestudios.progressbar95/com.ansca.corona.CoronaActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()

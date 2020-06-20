@@ -24,7 +24,7 @@ def knownTree():
 
 def checkDirName(name):
     invalidList = ['<INVALID', '{INVALID']
-    hexList = ['ENCRYPTED', 'YOU', 'NEED', 'WROMG', 'WRONG', '[HEX]']
+    hexList = ['ENCRYPTED', 'NEED', 'WROMG', 'WRONG', '[HEX]', '[X]', 'VIEWER', 'UIEWER']
     helpers.inputText([f'CD {name}'])
     screen = helpers.ocr(20, 4.55, 1.8)
     formatted = helpers.formatOcr(screen, 'none')
