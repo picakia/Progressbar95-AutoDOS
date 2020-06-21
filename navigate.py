@@ -145,9 +145,12 @@ def explore(currentDir, level=0, recur=True):
 
 def start(current=False, level=0, syscode=False):
     start_time = time.time()
-    currentDir = helpers.getKnownTree()
+    currentDir = 'empty'
     if current:
         currentDir = openDir(False, level)
+    else:
+        currentDir = helpers.getKnownTree()
+
     print('[navigate.py] Dir to explore:\n', currentDir)
     if currentDir != 'empty':
         explored = explore(currentDir, currentDir['level']+1, False)
