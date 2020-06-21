@@ -5,49 +5,31 @@ import re
 
 import helpers
 import HEX
+import codes
 
-# Constant folders in game
-def knownTree():
-    return {
-            'level': 0,
-            'PROGRESSBAR': {
-                'level': 1,
-                #'COLORCODE': 'enter',
-                #'SYSCODE': 'enter',
-                'TEMP': 'unknown'
-            },
-            'DOCUMENTS': 'unknown',
-            'BIN': 'unknown',
-            'PROGRAMS': 'empty',
-            'README': 'bad'
-    }
-
-def checkDirName(name):
-    invalidList = ['<INVALID', '{INVALID']
+def checkDir(name):
+    invalidList = ['<INVALID', '{INVALID', '{INUALID']
     hexList = ['ENCRYPTED', 'NEED', 'WROMG', 'WRONG', '[HEX]', '[X]', 'VIEWER', 'UIEWER']
-    helpers.inputText([f'CD {name}'])
-    screen = helpers.ocr(20, 4.55, 1.8)
+
+    validDir = True
+    screen = helpers.ocr(20, 4, 1.8, 2.1)
+    #screen = helpers.ocr(5.5, 4, 1.35, 2.1)
     formatted = helpers.formatOcr(screen, 'none')
-    print(f'[navigate.py] CheckDirName {name}:\n', formatted)
+    print(f'[navigate.py] CheckDir {name}:\n', formatted)
     for item in formatted:
         if item in hexList:
             HEX.solve()
-            return False
+            return (name, validDir)
     for item in formatted:
         if item in invalidList:
             print('[navigate.py] BAD folder', name)
-            return name[:-1] + '3'
-    return False
-
-def checkHex(foundStrings=False):
-    hexList = ['WRONG', 'YOU', 'NEED', '[HEX]']
-    if not foundStrings:
-        screen = helpers.ocr(5.5, 4, 1.35, 2.1)
-        foundStrings = helpers.formatOcr(screen)
-    for string in foundStrings:
-        if string in hexList:
-            return True
-    return False
+            if name[:-1] == '2':
+                validDir = 'changed'
+                name = name[:-1] + '3'
+            else:
+                validDir = False
+            return (name, validDir)
+    return (name, validDir)
 
 def goBack(HEX=False):
     command = ['CD..']
@@ -55,7 +37,7 @@ def goBack(HEX=False):
         command = ['X']
     helpers.inputText(command)
 
-def checkFolder(name):
+def checkTypeOfItem(name):
     emptyList = ['<THE', '{THE', 'DIRECT', '<INVALID','{INVALID']
     blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-', '{', '}']
     fixingList = {'MSC': 'MISC'}
@@ -88,7 +70,6 @@ def checkFolder(name):
     lastLetter = name[-1:]
     if lastLetter == 'Z':
         name = name[:-1] + '2'
-        nameType = 'check'
     if name in openFiles:
         nameType = 'open'
     if name in delFiles:
@@ -101,22 +82,21 @@ def checkFolder(name):
 def openDir(name=False, level=0):
     if name:
         helpers.inputText([f'CD {name}'])
-        isHex = checkHex()
-        if isHex:
-            HEX.solve()
+        name, valid = checkDir(name)
+        if not valid:
+            return 'invalid'
+        if valid == 'changed':
+            helpers.inputText([f'CD {name}'])
     if level == 7:
-        helpers.inputText(['CD..'])
         return 'empty'
 
-    commands = ['CLS', 'DIR']
-    helpers.inputText(commands)
-    screen = []
+    helpers.inputText(['CLS', 'DIR'])
     screen = helpers.ocr()
     formatted = helpers.formatOcr(screen)
     print(f'[navigate.py] Opened DIR {name}\n', formatted)
     dirs = { 'level': level }
     for item in formatted:
-        thing = checkFolder(item)
+        thing = checkTypeOfItem(item)
         if thing == 'empty':
             print('[navigate.py] Dir empty:', name)
             return thing
@@ -132,6 +112,8 @@ def openFile(name, method):
         helpers.inputText([name])
     if method == 'del':
         helpers.inputText([f'DEL {name}.TXT'])
+    if method == 'enter':
+        codes.enter(name)
     return
 
 def explore(currentDir, level=0, recur=True):
@@ -140,36 +122,29 @@ def explore(currentDir, level=0, recur=True):
         print('[navigate.py] Empty starting folder!')
         return
     for key, value in currentDir.items():
-        dirToOpen = key
-        if value == 'check':
-            newName = checkDirName(dirToOpen)
-            if newName:
-                dirToOpen = newName
-            else:
-                dirToOpen = False
-            value = 'unknown'
-            if level == 7:
-                value = 'empty'
         if value == 'empty':
             currentDir[key] = value
             goBack()
         elif value == 'unknown':
-            newDir = openDir(dirToOpen, level)
+            newDir = openDir(key, level)
             if newDir != 'empty':
                 currentDir[key] = newDir
                 explore(newDir, (level+1))
             else:
                 currentDir[key] = newDir
                 goBack()
+        elif isinstance(value, dict):
+            helpers.inputText([f'CD {key}'])
+            explore(value, (level+1))
         else:
             openFile(key, value)
     if recur:
         goBack()
     return currentDir
 
-def start(current=False, level=0):
+def start(current=False, level=0, syscode=False):
     start_time = time.time()
-    currentDir = knownTree()['PROGRESSBAR']
+    currentDir = helpers.getKnownTree()
     if current:
         currentDir = openDir(False, level)
     print('[navigate.py] Dir to explore:\n', currentDir)

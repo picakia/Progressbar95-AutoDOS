@@ -4,21 +4,35 @@ import time
 # Custom modules
 import helpers
 
-def enter(syscode):
+syscode = False
+codex = False
+
+def init(codeType, code):
+    if codeType == 'syscode':
+        syscode = code
+    else:
+        codex = code
+
+def enter(program):
     start_time = time.time()
-    screen = helpers.ocr(1.16, 4.6, 1.07, 4.1)
-    ocr_time = time.time()
-    colorcode = helpers.formatOcr(screen, 'hex', 2)
-    helpers.inputText(['CD PROGRESSBAR'])
     commands = []
-    if colorcode: 
-        commands.extend(['COLORCODE', colorcode[0]]);
-    if syscode:
-        commands.extend(['SYSCODE', syscode]);
+    if program == 'COLORCODE':
+        # Get color code from upper right corner and enter it when found
+        screen = helpers.ocr(1.16, 4.6, 1.07, 4.1)
+        colorcode = helpers.formatOcr(screen, 'hex', 2)
+        if colorcode:
+            commands.extend([program, colorcode[0]]);
+    if program == 'SYSCODE':
+        if not syscode:
+            return
+        # Input code syscode
+        commands.extend([program, syscode]);
+    if program == 'CODEX':
+        if not codex:
+            return
+        # Input Lorem code
+        commands.extend([program, syscode]);
+
     helpers.inputText(commands)
-    input_time = time.time()
-    print('CODES ELAPSED:')
-    print('OCR time', (ocr_time - start_time))
-    print('Input time', (input_time - ocr_time))
-    print('Total', (time.time() - start_time))
+    print('CODES ELAPSED:\n', round((time.time() - start_time), 4))
     return

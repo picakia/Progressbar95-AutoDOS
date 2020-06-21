@@ -3,13 +3,15 @@ import time
 
 import helpers
 
-def checkSolution():
-    badSolution = ['WRONG', 'URONG', 'CODE']
+def checkSolution(last=False):
+    badSolution = ['WRONG', 'URONG', 'CODE!', 'WROMG']
     screen = helpers.ocr(20, 2.1, 3.4, 2)
     response = helpers.formatOcr(screen)
     for item in response:
-        if 'WRONG' in item:
-            print('[HEX.py] Wrong solution! Trying low possibility')
+        if item in badSolution:
+            print('[HEX.py] Wrong solution! Trying lower possibility')
+            if last:
+                return solve()
             return False
     return True
 
@@ -43,10 +45,11 @@ def solve():
         correct = checkSolution()
         if not correct:
             helpers.inputText(solutionLow)
+            checkSolution(True)
     input_time = time.time()
     print('[HEX.py] Hex solve times:')
     print('[HEX.py] OCR time:', round((ocr_time - start_time), 4))
     print('[HEX.py] Solution time:', round((solution_time - ocr_time), 4))
     print('[HEX.py] Input time:', round((input_time - solution_time), 4))
     print('[HEX.py] Total:', round((time.time() - start_time), 4))
-    return
+    return True

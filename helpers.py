@@ -1,6 +1,7 @@
 from PIL import Image
 import subprocess
 import time
+from navigate import checkTypeOfItem
 
 resolution = subprocess.run(['adb', 'shell', 'wm', 'size'], universal_newlines=True, stdout=subprocess.PIPE)
 width, height = resolution.stdout[15:-1].split('x')
@@ -12,14 +13,17 @@ print('Get device resolution:', width, height)
 def formatOcr(string, replace='dirs', lenght=40):
     dictionary = { 'n': 'M', '?': '!', '�': 'A' }
     if replace == 'hex':
-        dictionary = { 'I': 1, 'i': '1', 'l': '1', 'O': '0', 'S': '5', 'b': '6', '?': '7', 'o': '0', 'Z': '2', 'z': '2', 'g': '8', 'n': 'A', 'q': '4', '�': 'A'}
+        dictionary = { 'I': '1', 'i': '1', 'l': '1', 'O': '0', 'S': '5', 'b': '6', '?': '7', 'o': '0', 'Z': '2', 'z': '2', 'g': '8', 'n': 'A', 'q': '4', '�': 'A', '|': '0'}
     arrayToFormat = string.replace('\n', ' ').split(' ')
     formatted = []
     for item in arrayToFormat:
         if item and len(item) > 1:
             if len(item) > lenght:
                 # Three char fix
-                item = item[:1] + item[-1:]
+                if item[-2:] == 'Ol' or item[-2:] == 'ol':
+                    item = item[:1] + '0'
+                else:
+                    item = item[:1] + item[-1:]
             if replace == 'none':
                 formatted.append(item.upper().strip())
             else:
@@ -50,4 +54,36 @@ def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     print('[helpers.py] Vision:\n', vision)
     print('[helpers.py] OCR time:\n', (time.time()-start_time))
     return vision
+
+# Constant folders in game
+def getKnownTree():
+    inputText(['CLS', 'DIR'])
+    screen = ocr()
+    formatted = formatOcr(screen)
+    dirs = { 'level': 0 }
+    for item in formatted:
+        thing = checkTypeOfItem(item)
+        if not thing:
+            continue
+        if thing['name'] == 'PROGRESSBAR':
+            dirs[thing['name']] = {
+                'level': 1,
+                'COLORCODE': 'enter',
+                'SYSCODE': 'enter',
+                'TEMP': 'unknown'
+            }
+        elif thing['name'] == 'PROGRAMS':
+            #dirs[thing['name']] = {
+            #    'level': 1,
+            #    'LATIN': {
+            #        'CODEX': 'enter'
+            #    }
+            #}
+            # No codex code support currently
+            dirs[thing['name']] = 'empty'
+        else:
+            if thing['name'] in dirs:
+                thing['name'] = thing['name'][:-1] + '3'
+            dirs[thing['name']] = thing['nameType']
+    return dirs
 
