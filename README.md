@@ -6,7 +6,8 @@ Automation for ProgressDOS in Progressbar95 game on your android device
 * Python 3
 * ocrad OCR engine
 * ADB for Termux
-* libjpg-turbo
+* libjpg-turboa
+* Keyboard without autocompletion
 
 ## Installation:
 1. Open Termux
@@ -20,10 +21,13 @@ Automation for ProgressDOS in Progressbar95 game on your android device
    * Connect phone with usb to computer
    * Open cmd where you have adb installed (Minimal ADB and fasboot recommended - google it)
    * Check if your device shows ```adb devices```
-   * Run ```adb tcpip 555```
+   * Run ```adb tcpip 5555```
    * Disconnect phone
 4. Open Progressbar95 and ProgressDOS window
 5. Open Termux and cd into AutoDOS directory
 6. ```python solve.py```
 
-**For advanced usage run ```python solve.py -h```**
+## Advanced usage
+```
+python solve.py -h
+```

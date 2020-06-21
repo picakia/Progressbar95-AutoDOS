@@ -7,7 +7,7 @@ resolution = subprocess.run(['adb', 'shell', 'wm', 'size'], universal_newlines=T
 width, height = resolution.stdout[15:-1].split('x')
 width = int(width)
 height = int(height)
-print('Get device resolution:', width, height)
+print('Device resolution:', width, height)
 
 # OCR formatter
 def formatOcr(string, replace='dirs', lenght=40):
@@ -45,9 +45,9 @@ def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     file = open('/sdcard/dos.raw', 'rb')
     raw = file.read()
     file.close()
-    game = Image.frombuffer('RGBA', (1080,2160), raw, 'raw', 'RGBA', 0, 1)
+    game = Image.frombuffer('RGBA', (width, height), raw, 'raw', 'RGBA', 0, 1)
     dos = game.crop((round(width/divideLeft), round(height/divideTop), round(width/divideRight), round(height/divideBottom)))
-    #game.save('/sdcard/vision.png', 'PNG')
+    #dos.save('/sdcard/vision.png', 'PNG')
     dos.save('/sdcard/vision.ppm', 'PPM')
     ocrad = subprocess.run(["ocrad", "--scale=2", "/sdcard/vision.ppm"], universal_newlines=True, errors='replace', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     vision = ocrad.stdout
