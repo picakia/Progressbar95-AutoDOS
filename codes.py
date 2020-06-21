@@ -4,15 +4,6 @@ import time
 # Custom modules
 import helpers
 
-syscode = False
-codex = False
-
-def init(codeType, code):
-    if codeType == 'syscode':
-        syscode = code
-    else:
-        codex = code
-
 def enter(program):
     start_time = time.time()
     commands = []

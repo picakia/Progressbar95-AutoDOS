@@ -26,7 +26,7 @@ parser.add_argument('-l, --level', metavar='level', type=int, default=0, help='S
 parser.add_argument('--dev', action='store_true', default=False, help='DEV: call debug functions')
 args = parser.parse_args()
 
-codes.init('syscode', args.syscode)
+codes.syscode = args.syscode
 
 print('Open game')
 subprocess.Popen(['am', 'start', '--activity-single-top', '-n', 'com.spookyhousestudios.progressbar95/com.ansca.corona.CoronaActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
