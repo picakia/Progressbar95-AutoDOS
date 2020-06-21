@@ -67,7 +67,7 @@ def getKnownTree():
             continue
         if thing['name'] == 'PROGRESSBAR':
             dirs[thing['name']] = {
-                'level': 1,
+                'level': 0,
                 'COLORCODE': 'enter',
                 'SYSCODE': 'enter',
                 'TEMP': 'unknown'

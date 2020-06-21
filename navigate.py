@@ -87,7 +87,7 @@ def openDir(name=False, level=0):
             return 'invalid'
         if valid == 'changed':
             helpers.inputText([f'CD {name}'])
-    if level == 7:
+    if level == 6:
         return 'empty'
 
     helpers.inputText(['CLS', 'DIR'])
@@ -124,7 +124,8 @@ def explore(currentDir, level=0, recur=True):
     for key, value in currentDir.items():
         if value == 'empty':
             currentDir[key] = value
-            goBack()
+            if level != 1:
+                goBack()
         elif value == 'unknown':
             newDir = openDir(key, level)
             if newDir != 'empty':
@@ -135,7 +136,7 @@ def explore(currentDir, level=0, recur=True):
                 goBack()
         elif isinstance(value, dict):
             helpers.inputText([f'CD {key}'])
-            explore(value, (level+1))
+            explore(value, level)
         else:
             openFile(key, value)
     if recur:
