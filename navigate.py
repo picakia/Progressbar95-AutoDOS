@@ -2,6 +2,7 @@ import subprocess
 import time
 import json
 import re
+from datetime import timedelta
 
 import helpers
 import HEX
@@ -133,6 +134,7 @@ def explore(currentDir, level=0, recur=True):
                 goBack()
             elif newDir == 'invalid':
                 currentDir[key] = newDir
+                helpers.inputText(['CLS'])
             else:
                 currentDir[key] = newDir
                 explore(newDir, (level+1))
@@ -156,8 +158,8 @@ def start(current=False, level=0, syscode=False):
     print('[navigate.py] Dir to explore:\n', currentDir)
     if currentDir != 'empty':
         explored = explore(currentDir, currentDir['level']+1, False)
-        print('[navigate.py] EXPLORED TREE:\n', json.dumps(explored, indent=2))
-    print('[navigate.py] ELAPSED explore:')
-    print('[navigate.py] Total:', round((time.time() - start_time), 4))
+        print('[navigate.py] EXPLORED TREE:\n', json.dumps(explored, indent=2)) 
+    time_elapsed = round((time.time() - start_time), 4)
+    print('[navigate.py] ELAPSED explore:', timedelta(seconds=time_elapsed))
     helpers.inputText(['FINISHED!'])
     return

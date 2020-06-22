@@ -21,7 +21,7 @@ from helpers import inputText, ocr, formatOcr
 
 # Parse arguments
 parser = argparse.ArgumentParser(description='Automate ProgressDOS')
-parser.add_argument('-s, --syscode', default=None, metavar='XXX', help='3 digit code displayed on boot screen', dest='syscode')
+parser.add_argument('-s, --syscode', default=None, metavar='XXX', help='3 digit code displayed on Progressbar boot screen', dest='syscode')
 parser.add_argument('-h, --hex', action='store_true', default=False, help='Only solve hex puzzle', dest='hex')
 parser.add_argument('-d, --dir', action='store_true', default=0, help='Browse from current directory', dest='dir')
 parser.add_argument('-l, --level', metavar='level', type=int, default=0, help='Starting directory level for --dir option', dest='level')
