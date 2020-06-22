@@ -39,7 +39,7 @@ def goBack(HEX=False):
 
 def checkTypeOfItem(name):
     emptyList = ['<THE', '{THE', 'DIRECT', '<INVALID','{INVALID']
-    blacklist = ['TXT', 'EXE', '<', '>', ':', '/', '.', '-', '{', '}']
+    blacklist = ['<', '>', ':', '/', '.', '-', '{', '}', '_']
     fixingList = {'MSC': 'MISC'}
     openFiles = ['BONUS', 'EASTEREGG']
     delFiles = ['CHEATS']
@@ -128,12 +128,14 @@ def explore(currentDir, level=0, recur=True):
                 goBack()
         elif value == 'unknown':
             newDir = openDir(key, level)
-            if newDir != 'empty':
-                currentDir[key] = newDir
-                explore(newDir, (level+1))
-            else:
+            if newDir == 'empty':
                 currentDir[key] = newDir
                 goBack()
+            elif newDir == 'invalid':
+                currentDir[key] = newDir
+            else:
+                currentDir[key] = newDir
+                explore(newDir, (level+1))
         elif isinstance(value, dict):
             helpers.inputText([f'CD {key}'])
             explore(value, level)

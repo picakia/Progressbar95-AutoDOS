@@ -2,6 +2,7 @@
 import sys
 import subprocess
 import time
+from datetime import timedelta
 import argparse
 
 # Run adb devices to start daemon first
@@ -9,6 +10,7 @@ adbOut = subprocess.run(['adb','devices'], check=True, stdout=subprocess.PIPE, u
 devCheck = adbOut.stdout.replace('\t', '\n').split('\n')
 if 'device' not in devCheck:
     print('No ADB device found! Check Readme on github page for possible solutions!')
+    subprocess.run(['adb','kill-server'], stdout=subprocess.DEVNULL)
     exit()
 
 # Load custom modules
@@ -57,6 +59,6 @@ inputText(['COLOR F0'])
 # Explore all other directories
 navigate.start()
 
-print('ELAPSED:')
-print((time.time() - start_time))
+time_elapsed = round((time.time() - start_time), 2)
+print('[solve.py] ELAPSED:\n', timedelta(seconds=time_elapsed))
 subprocess.Popen(['am', 'start', '--activity-single-top', 'com.termux/com.termux.app.TermuxActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
