@@ -47,7 +47,12 @@ def ocr(divideLeft=20, divideTop=4.55, divideRight=3.2, divideBottom=2.1):
     file.close()
     game = Image.frombuffer('RGBA', (width, height), raw, 'raw', 'RGBA', 0, 1)
     dos = game.crop((round(width/divideLeft), round(height/divideTop), round(width/divideRight), round(height/divideBottom)))
-    #dos.save('/sdcard/vision.png', 'PNG')
+    # Check if image is completly black
+    extrema = dos.convert("L").getextrema()
+    if extrema == (0, 0):
+        print('[helpers.py] Locked screen! Exiting...')
+        exit()
+    dos.save('/sdcard/vision.png', 'PNG')
     dos.save('/sdcard/vision.ppm', 'PPM')
     ocrad = subprocess.run(["ocrad", "--scale=2", "/sdcard/vision.ppm"], universal_newlines=True, errors='replace', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     vision = ocrad.stdout

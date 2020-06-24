@@ -9,7 +9,7 @@ import argparse
 adbOut = subprocess.run(['adb','devices'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
 devCheck = adbOut.stdout.replace('\t', '\n').split('\n')
 if 'device' not in devCheck:
-    print('No ADB device found! Check Readme on github page for possible solutions!')
+    print('No ADB device found! Did click on allow? For more solutions check README on github page for possible solutions!')
     subprocess.run(['adb','kill-server'], stdout=subprocess.DEVNULL)
     exit()
 
@@ -33,6 +33,9 @@ codes.syscode = args.syscode
 print('Open game')
 subprocess.Popen(['am', 'start', '--activity-single-top', '-n', 'com.spookyhousestudios.progressbar95/com.ansca.corona.CoronaActivity'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
 
+# Change terminal color to F0 for better OCR
+inputText(['COLOR F0'])
+
 # If you want to only solve hex puzzle pass --hex param
 if args.hex:
     HEX.solve()
@@ -53,9 +56,6 @@ if args.dev:
     exit()
 
 start_time = time.time()
-# Change terminal color to F0 for better OCR
-inputText(['COLOR F0'])
-
 # Explore all other directories
 navigate.start()
 

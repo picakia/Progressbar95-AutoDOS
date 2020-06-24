@@ -24,9 +24,9 @@ Automation for ProgressDOS/ProgressCMD/ProgressShell in Progressbar95 game
 ## Installation:
 1. Install keyboard without autocompletion and set it as input method while running script (this is because autocompletion messes with input, I'm using Hacker's keyboard)
 2. Install and Open Termux
-3. ```apt update && apt install git python ocrad libjpg-turbo && pip install Pillow```
+3. `apt update && apt install git python ocrad libjpg-turbo && pip install Pillow`
 4. Install Termux adb tools from [HERE](https://github.com/MasterDevX/Termux-ADB)
-5. ```git clone https://github.com/picakia/Progressbar95-AutoDOS.git```
+5. `git clone https://github.com/picakia/Progressbar95-AutoDOS.git`
 
 ## Basic usage
 1. Make sure you have all of above installed
@@ -34,13 +34,13 @@ Automation for ProgressDOS/ProgressCMD/ProgressShell in Progressbar95 game
 3. If you don't have root:
    * Connect phone with USB cable to computer
    * Open cmd where you have adb installed (Minimal ADB and fasboot recommended - [LINK](https://forum.xda-developers.com/showthread.php?t=2317790))
-   * Check if your device shows using ```adb devices```
+   * Check if your device shows using `adb devices`
    * If you don't see your device look for adb tutorial in google
-   * Run ```adb tcpip 5555```
+   * Run `adb tcpip 5555`
    * Disconnect phone
 4. Open Progressbar95 and ProgressDOS window
-5. Open Termux and cd into AutoDOS directory (```cd Progressbar95-AutoDOS```)
-6. Run ```python solve.py```
+5. Open Termux and cd into AutoDOS directory (`cd Progressbar95-AutoDOS`)
+6. Run `python solve.py`
 
 ## Advanced usage
 ```
@@ -53,6 +53,10 @@ optional arguments:
   -l, --level level  Starting directory level for --dir option
   --dev              DEV: call debug functions
 ```
+## Notes
+* Eploring can take anywhere from 20 to 70 minutes depending on folders generated
+* After exploring is done you need to play at least one normal game to collect points
+* If you need to stop executing script just lock your screen for few moments or switch to Termux and hit CTRL+C
 
 ## Credits
 Many thanks to:
